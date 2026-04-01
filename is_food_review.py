@@ -31,10 +31,10 @@ ml_model, nn_model, scaler, le_cuisine, df_raw = load_all_assets()
 # --- 3. ส่วนของ Sidebar (เมนู 4 หน้า) ---
 st.sidebar.title("🍱 Menu")
 page = st.sidebar.radio("เลือกหน้า", [
-    "📊 Info: ML Theory & Data", 
-    "🧠 Info: NN Theory", 
-    "🔮 Test: ML Predict", 
-    "🤖 Test: NN Predict"
+    "📊 เนื้อหาข้อมูล Machine Learning", 
+    "🧠 เนื้อหาข้อมูล Neural Network", 
+    "🔮 ทดลองแบบ Machine Learning", 
+    "🤖 ทดลองแบบ Neural Network"
 ])
 
 st.sidebar.markdown("---")
@@ -42,8 +42,8 @@ st.sidebar.caption("🤖 **AI Collaboration Credit**")
 st.sidebar.write("Project designed with **Gemini AI**")
 
 # --- หน้าที่ 1: Dashboard และทฤษฎี ML ---
-if page == "📊 Info: ML Theory & Data":
-    st.title("🍔 ข้อมูลและการพยากรณ์ด้วย ML")
+if page == "📊 เนื้อหาข้อมูล Machine Learning":
+    st.title("🍔 ข้อมูลและการพยากรณ์ด้วย Machine Learning")
     
     # ส่วน Dashboard
     st.subheader("📈 วิเคราะห์ข้อมูลเบื้องต้น")
@@ -55,33 +55,50 @@ if page == "📊 Info: ML Theory & Data":
         
     with col2:
         st.write("**ราคาเฉลี่ยต่อจาน (บาท)**")
-        # แก้ไขจุดที่ทำให้เกิด TypeError ในกราฟ
         df_raw['Avg_Price'] = pd.to_numeric(df_raw['Avg_Price'], errors='coerce')
         avg_price_chart = df_raw.groupby('Cuisine')['Avg_Price'].mean()
         st.line_chart(avg_price_chart)
 
     st.divider()
-    st.write("### 📝 ทฤษฎี Machine Learning")
+    
+    # เพิ่มเนื้อหาแนวทางการพัฒนา ML
+    st.header("📝 แนวทางการพัฒนา (Machine Learning)")
+    
+    st.subheader("1. การเตรียมข้อมูล (Data Preparation)")
+    st.markdown("""
+    - **Cleaning:** จัดการค่าว่างด้วย Median/Mean และลบสัญลักษณ์พิเศษในราคาเพื่อให้เป็นตัวเลขที่คำนวณได้
+    - **Encoding:** ใช้ *Label Encoding* เพื่อเปลี่ยนชื่อประเภทอาหารให้เป็นรหัสตัวเลข
+    - **Scaling:** ใช้ *StandardScaler* ปรับสเกลข้อมูลทุกตัวแปรให้สมดุล เพื่อไม่ให้ยอด Check-in ที่มีค่าสูงบดบังปัจจัยอื่น
+    """)
+    
+    st.subheader("2. ทฤษฎีอัลกอริทึม (Algorithm Theory)")
     st.markdown("""
     - **Model Type:** Ensemble Voting Classifier
-    - **Algorithms:** Random Forest, XGBoost และ Logistic Regression
-    - **Process:** ใช้ระบบ Soft Voting เพื่อคำนวณหาค่าเฉลี่ยความน่าจะเป็น (Probability) ออกมาเป็นเปอร์เซ็นต์
+    - **Algorithms:** การรวมพลังของ 3 โมเดลหลักคือ *Random Forest*, *XGBoost* และ *Logistic Regression*
+    - **Process:** ใช้ระบบ **Soft Voting** เพื่อหาค่าเฉลี่ยความน่าจะเป็นจากทั้ง 3 โมเดล ทำให้ผลลัพธ์มีความแม่นยำสูงและออกมาเป็นเปอร์เซ็นต์ (%)
     """)
+    st.info("📚 แหล่งอ้างอิง: Scikit-learn & XGBoost Documentation")
 
 # --- หน้าที่ 2: ทฤษฎี Neural Network ---
-elif page == "🧠 Info: NN Theory":
-    st.title("🧠 โครงสร้าง Neural Network")
-    st.write("### Multi-layer Perceptron (MLP)")
+elif page == "🧠 เนื้อหาข้อมูล Neural Network":
+    st.title("🧠 โครงสร้างและแนวทาง Neural Network")
+    
+    st.header("📝 แนวทางการพัฒนา (Neural Network)")
+    
+    st.subheader("1. แนวทางการพัฒนา")
+    st.write("เลือกใช้โครงสร้าง *Multi-layer Perceptron (MLP)* แทนที่ LSTM เพื่อให้โมเดลมีขนาดเบา ประมวลผลได้รวดเร็ว และเสถียรเมื่อทำงานบนระบบ Cloud")
+    
+    st.subheader("2. ทฤษฎีและโครงสร้างโมเดล (Architecture)")
     st.markdown("""
-    - **Architecture:** 2 Hidden Layers (16 และ 8 Neurons)
-    - **Activation Function:** ReLU สำหรับชั้นซ่อน และ Sigmoid สำหรับ Output
-    - **Optimization:** ใช้ 'Adam' optimizer ในการฝึกฝนโมเดล
-    - **Note:** โมเดลนี้ถูกออกแบบมาให้เบาและรันได้รวดเร็วบนระบบ Cloud
+    - **Architecture:** ประกอบด้วย 2 ชั้นซ่อน (Hidden Layers) ขนาด 16 และ 8 Neurons
+    - **Activation Function:** ใช้ *ReLU* ในชั้นซ่อนเพื่อเรียนรู้ความสัมพันธ์ที่ซับซ้อน และ *Sigmoid* ในส่วนสุดท้ายเพื่อคำนวณโอกาสสำเร็จเป็นเปอร์เซ็นต์
+    - **Optimization:** ใช้ *Adam Optimizer* ในการเพิ่มประสิทธิภาพการเรียนรู้ของโมเดล
     """)
+    st.info("📚 แหล่งอ้างอิง: Multi-layer Perceptron by Scikit-learn")
 
 # --- หน้าที่ 3: ทดสอบพยากรณ์ด้วย ML ---
-elif page == "🔮 Test: ML Predict":
-    st.title("🔮 ทดสอบพยากรณ์ (ML)")
+elif page == "🔮 ทดลองแบบ Machine Learning":
+    st.title("🔮 ทดสอบพยากรณ์ด้วย Machine Learning")
     
     with st.container(border=True):
         c = st.selectbox("ประเภทอาหาร", le_cuisine.classes_)
@@ -89,20 +106,17 @@ elif page == "🔮 Test: ML Predict":
         l = st.slider("ระดับทำเล (1-10)", 1, 10, 5)
         s = st.number_input("ยอด Check-in โซเชียล", min_value=0, value=100)
         
-        if st.button("ประมวลผลด้วย ML", use_container_width=True):
-            # เตรียมข้อมูลและทำ Scaling
+        if st.button("เริ่มประมวลผล (ML)", use_container_width=True):
             inp = np.array([[le_cuisine.transform([c])[0], p, l, s]])
             inp_scaled = scaler.transform(inp)
-            
-            # ทำนายเป็น %
             prob = ml_model.predict_proba(inp_scaled)[0][1] * 100
             
             st.subheader(f"โอกาสรอดของร้านคือ: {prob:.2f}%")
             st.progress(prob/100)
 
 # --- หน้าที่ 4: ทดสอบพยากรณ์ด้วย NN ---
-elif page == "🤖 Test: NN Predict":
-    st.title("🤖 ทดสอบพยากรณ์ (NN AI)")
+elif page == "🤖 ทดลองแบบ Neural Network":
+    st.title("🤖 ทดสอบพยากรณ์ด้วย Neural Network (AI)")
     
     with st.container(border=True):
         c = st.selectbox("ประเภทอาหาร ", le_cuisine.classes_)
@@ -110,12 +124,9 @@ elif page == "🤖 Test: NN Predict":
         l = st.slider("ความสวยงามของทำเล (1-10) ", 1, 10, 5)
         s = st.number_input("ยอดผู้เข้าใช้งาน (Social) ", min_value=0, value=100)
         
-        if st.button("ประมวลผลด้วย Neural Network", use_container_width=True):
-            # เตรียมข้อมูลและทำ Scaling
+        if st.button("เริ่มประมวลผล (NN AI)", use_container_width=True):
             inp = np.array([[le_cuisine.transform([c])[0], p, l, s]])
             inp_scaled = scaler.transform(inp)
-            
-            # ทำนายเป็น % ด้วย MLP
             prob = nn_model.predict_proba(inp_scaled)[0][1] * 100
             
             st.subheader(f"AI วิเคราะห์โอกาสรอดได้: {prob:.2f}%")
